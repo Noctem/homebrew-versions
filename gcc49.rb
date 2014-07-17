@@ -36,11 +36,11 @@ class Gcc49 < Formula
   # enabling multilib on a host that can't run 64-bit results in build failures
   option "disable-multilib", "Build without multilib support" if MacOS.prefer_64_bit?
 
-  depends_on "gmp6"
-  depends_on "libmpc08"
-  depends_on "mpfr2"
-  depends_on "cloog018"
-  depends_on "isl011"
+  depends_on "gmp"
+  depends_on "libmpc"
+  depends_on "mpfr"
+  depends_on "cloog"
+  depends_on "isl"
   depends_on "ecj" if build.include? "enable-java" or build.include? "enable-all-languages"
 
   def install
