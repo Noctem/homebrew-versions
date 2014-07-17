@@ -1,18 +1,18 @@
-require 'formula'
+require "formula"
 
 class Gcc49 < Formula
   def arch
     if Hardware::CPU.type == :intel
       if MacOS.prefer_64_bit?
-        'x86_64'
+        "x86_64"
       else
-        'i686'
+        "i686"
       end
     elsif Hardware::CPU.type == :ppc
       if MacOS.prefer_64_bit?
-        'ppc64'
+        "ppc64"
       else
-        'ppc'
+        "ppc"
       end
     end
   end
@@ -21,36 +21,36 @@ class Gcc49 < Formula
     `uname -r`.chomp
   end
 
-  homepage 'http://gcc.gnu.org'
-  url 'http://ftpmirror.gnu.org/gcc/gcc-4.9.0/gcc-4.9.0.tar.bz2'
-  mirror 'ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.0/gcc-4.9.0.tar.bz2'
-  sha1 'fbde8eb49f2b9e6961a870887cf7337d31cd4917'
+  homepage "https://gcc.gnu.org"
+  url "http://ftpmirror.gnu.org/gcc/gcc-4.9.1/gcc-4.9.1.tar.bz2"
+  mirror "ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.1/gcc-4.9.1.tar.bz2"
+  sha1 "3f303f403053f0ce79530dae832811ecef91197e"
 
-  head 'svn://gcc.gnu.org/svn/gcc/branches/gcc-4_9-branch'
+  head "svn://gcc.gnu.org/svn/gcc/branches/gcc-4_9-branch"
 
-  option 'enable-fortran', 'Build the gfortran compiler'
-  option 'enable-java', 'Build the gcj compiler'
-  option 'enable-all-languages', 'Enable all compilers and languages, except Ada'
-  option 'enable-nls', 'Build with native language support (localization)'
-  option 'enable-profiled-build', 'Make use of profile guided optimization when bootstrapping GCC'
+  option "enable-fortran", "Build the gfortran compiler"
+  option "enable-java", "Build the gcj compiler"
+  option "enable-all-languages", "Enable all compilers and languages, except Ada"
+  option "enable-nls", "Build with native language support (localization)"
+  option "enable-profiled-build", "Make use of profile guided optimization when bootstrapping GCC"
   # enabling multilib on a host that can't run 64-bit results in build failures
-  option 'disable-multilib', 'Build without multilib support' if MacOS.prefer_64_bit?
+  option "disable-multilib", "Build without multilib support" if MacOS.prefer_64_bit?
 
-  depends_on 'gmp4'
-  depends_on 'libmpc08'
-  depends_on 'mpfr2'
-  depends_on 'cloog018'
-  depends_on 'isl011'
-  depends_on 'ecj' if build.include? 'enable-java' or build.include? 'enable-all-languages'
+  depends_on "gmp6"
+  depends_on "libmpc08"
+  depends_on "mpfr2"
+  depends_on "cloog018"
+  depends_on "isl011"
+  depends_on "ecj" if build.include? "enable-java" or build.include? "enable-all-languages"
 
   def install
     # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
     cxxstdlib_check :skip
 
     # GCC will suffer build errors if forced to use a particular linker.
-    ENV.delete 'LD'
+    ENV.delete "LD"
 
-    if build.include? 'enable-all-languages'
+    if build.include? "enable-all-languages"
       # Everything but Ada, which requires a pre-existing GCC Ada compiler
       # (gnat) to bootstrap. GCC 4.6.0 add go as a language option, but it is
       # currently only compilable on Linux.
@@ -59,8 +59,8 @@ class Gcc49 < Formula
       # C, C++, ObjC compilers are always built
       languages = %w[c c++ objc obj-c++]
 
-      languages << 'fortran' if build.include? 'enable-fortran'
-      languages << 'java' if build.include? 'enable-java'
+      languages << "fortran" if build.include? "enable-fortran"
+      languages << "java" if build.include? "enable-java"
     end
 
     version_suffix = version.to_s.slice(/\d\.\d/)
@@ -98,21 +98,21 @@ class Gcc49 < Formula
 
     # Otherwise make fails during comparison at stage 3
     # See: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=45248
-    args << '--with-dwarf2' if MacOS.version < :leopard
+    args << "--with-dwarf2" if MacOS.version < :leopard
 
-    args << '--disable-nls' unless build.include? 'enable-nls'
+    args << "--disable-nls" unless build.include? "enable-nls"
 
-    if build.include? 'enable-java' or build.include? 'enable-all-languages'
+    if build.include? "enable-java" or build.include? "enable-all-languages"
       args << "--with-ecj-jar=#{Formula["ecj"].opt_prefix}/share/java/ecj.jar"
     end
 
-    if !MacOS.prefer_64_bit? || build.include?('disable-multilib')
-      args << '--disable-multilib'
+    if !MacOS.prefer_64_bit? || build.include?("disable-multilib")
+      args << "--disable-multilib"
     else
-      args << '--enable-multilib'
+      args << "--enable-multilib"
     end
 
-    mkdir 'build' do
+    mkdir "build" do
       unless MacOS::CLT.installed?
         # For Xcode-only systems, we need to tell the sysroot path.
         # 'native-system-header's will be appended
@@ -120,20 +120,20 @@ class Gcc49 < Formula
         args << "--with-sysroot=#{MacOS.sdk_path}"
       end
 
-      system '../configure', *args
+      system "../configure", *args
 
-      if build.include? 'enable-profiled-build'
+      if build.include? "enable-profiled-build"
         # Takes longer to build, may bug out. Provided for those who want to
         # optimise all the way to 11.
-        system 'make profiledbootstrap'
+        system "make profiledbootstrap"
       else
-        system 'make bootstrap'
+        system "make bootstrap"
       end
 
       # At this point `make check` could be invoked to run the testsuite. The
       # deja-gnu and autogen formulae must be installed in order to do this.
 
-      system 'make install'
+      system "make install"
     end
 
     # Handle conflicts between GCC formulae.
