@@ -1,9 +1,9 @@
 require "formula"
 
 class Perl520 < Formula
-  homepage "http://www.perl.org/"
-  url "http://www.cpan.org/src/5.0/perl-5.20.0.tar.gz"
-  sha1 "52087047fd35e1020387f7c492f594a397be4e12"
+  homepage "https://www.perl.org/"
+  url "http://www.cpan.org/src/5.0/perl-5.20.1.tar.gz"
+  sha1 "dad920583cab07e96bb8860a70eebc5fa9cf8e4d"
 
   keg_only "System provides Perl. Also conflicts with other Perl versions."
 
