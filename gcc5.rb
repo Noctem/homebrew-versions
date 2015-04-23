@@ -21,7 +21,7 @@ class Gcc5 < Formula
 
   homepage "https://gcc.gnu.org"
   url "http://ftpmirror.gnu.org/gcc/gcc-5.1.0/gcc-5.1.0.tar.bz2"
-  mirror "ftp://gcc.gnu.org/pub/gcc/releases/gcc-5.1.0/gcc-5.1.0.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/gcc/gcc-5.1.0/gcc-5.1.0.tar.bz2"
   sha256 "b7dafdf89cbb0e20333dbf5b5349319ae06e3d1a30bf3515b5488f7e89dca5ad"
 
   head "svn://gcc.gnu.org/svn/gcc/trunk"
@@ -66,6 +66,7 @@ class Gcc5 < Formula
   # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
   cxxstdlib_check :skip
 
+  # Fix for libgccjit.so linkage on Darwin
   # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64089
   patch :DATA
 
@@ -201,7 +202,6 @@ class Gcc5 < Formula
     system bin/"gcc-5", "-o", "hello-c", "hello-c.c"
     assert_equal "Hello, world!\n", `./hello-c`
   end
-
 end
 __END__
 --- a/gcc/jit/Make-lang.in	2015-02-03 17:19:58.000000000 +0000
